@@ -173,7 +173,8 @@ predict_image(model,image_index=80,dataset=test_dataset)
 ### OUTPUT
 
 ## Training Loss per Epoch
-<img width="820" height="792" alt="image" src="https://github.com/user-attachments/assets/d423e637-db87-448e-9855-c6661bf70b53" />
+<img width="659" height="476" alt="Screenshot 2025-11-18 093907" src="https://github.com/user-attachments/assets/1c645c54-d944-4dde-ae1e-44ea27b683ba" />
+
 
 ## Confusion Matrix
 
