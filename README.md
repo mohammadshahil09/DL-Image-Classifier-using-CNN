@@ -10,184 +10,66 @@ The MNIST dataset consists of 70,000 grayscale images of handwritten digits (0-9
 Include the neural network model diagram.
 
 ## DESIGN STEPS
+### STEP 1: 
 
-STEP 1:
-Import all the required libraries (PyTorch, TorchVision, NumPy, Matplotlib, etc.)
+Classify handwritten digits (0–9) using the MNIST dataset.
+### STEP 2: 
 
-STEP 2:
-Download and preprocess the MNIST dataset using transforms.
+Import required libraries such as TensorFlow/Keras, NumPy, and Matplotlib. Load the MNIST dataset using keras.datasets.mnist.load_data().
+### STEP 3: 
 
-STEP 3:
-Create a CNN model with convolution, pooling, and fully connected layers.
+Normalize the image pixel values (scale from 0-255 to 0-1). Reshape the images to match CNN input shape.
+### STEP 4: 
 
-STEP 4:
-Set the loss function and optimizer. Move the model to GPU if available.
+Initialize a Sequential model. Add convolutional layers with activation (ReLU), followed by pooling layers. Flatten the output and add Dense layers. Use a softmax layer for classification.
+### STEP 5: 
 
-STEP 5:
-Train the model using the training dataset for multiple epochs.
+Compile the model with an optimizer (e.g., Adam), loss function (e.g., categorical crossentropy), and metrics (accuracy). Train the model using training data and validate using validation split or test data.
+### STEP 6: 
 
-STEP 6:
-Evaluate the model using the test dataset and visualize the results (accuracy, confusion matrix, classification report, sample prediction).
-
-
+Evaluate the model on test data and print accuracy. Plot training/validation loss and accuracy curves. Optionally, display a confusion matrix or sample predictions.
 ## PROGRAM
 
 ### Name: MOHAMMAD SHAHIL
 
-### Register Number:212223240044
+### Register Number: 212223240044
+
 ```python
-import torch as t
-import torch.nn as nn
-import torch.optim as optim
-import torchvision
-import torchvision.transforms as transforms
-from torch.utils.data import DataLoader
-import matplotlib.pyplot as plt
-import numpy as np
-import seaborn as sns
-from sklearn.metrics import confusion_matrix, classification_report
-
-transform=transforms.Compose([transforms.ToTensor(),transforms.Normalize((0.5,),(0.5,))])
-train_dataset=torchvision.datasets.MNIST(root='./data',train=True,download=True,transform=transform)
-test_dataset=torchvision.datasets.MNIST(root='./data',train=False,download=True,transform=transform)
-
-image,label=train_dataset[0]
-print("Image shape:",image.shape)
-print("Number of training samples:",len(train_dataset))
-
-image,label=test_dataset[0]
-print("Image shape:",image.shape)
-print("Number of testing samples:",len(test_dataset))
-train_loader=DataLoader(train_dataset,batch_size=32,shuffle=True)
-test_loader=DataLoader(test_dataset,batch_size=32,shuffle=False)
-
 class CNNClassifier(nn.Module):
-  def __init__(self):
-    super(CNNClassifier,self).__init__()
-    self.conv1=nn.Conv2d(in_channels=1,out_channels=32,kernel_size=3,padding=1)
-    self.conv2=nn.Conv2d(in_channels=32,out_channels=64,kernel_size=3,padding=1)
-    self.conv3=nn.Conv2d(in_channels=64,out_channels=128,kernel_size=3,padding=1)
-    self.pool=nn.MaxPool2d(kernel_size=2,stride=2)
-    self.fc1=nn.Linear(128*3*3,128)
-    self.fc2=nn.Linear(128,64)
-    self.fc3=nn.Linear(64,10)
+    def __init__(self, input_size):
+        super(CNNClassifier, self).__init__()
+        #Include your code here
 
-  def forward(self,x):
-    x=self.pool(t.relu(self.conv1(x)))
-    x=self.pool(t.relu(self.conv2(x)))
-    x=self.pool(t.relu(self.conv3(x)))
-    x=x.view(x.size(0),-1)
-    x=nn.functional.relu(self.fc1(x))
-    x=nn.functional.relu(self.fc2(x))
-    x=self.fc3(x)
-    return x
+    def forward(self, x):
+        #Include your code here
 
-from torchsummary import summary
-model=CNNClassifier()
-if t.cuda.is_available():
-  device=t.device("cuda")
-  model.to(device)
-print("Name: MOHAMMAD SHAHL")
-print("Reg.no: 212223240044")
-summary(model,input_size=(1,28,28))
-criterion=nn.CrossEntropyLoss()
-optimizer=optim.Adam(model.parameters(),lr=0.001)
-def train_model(model,train_loader,num_epochs):
-  for epoch in range(num_epochs):
-    model.train()
-    running_loss=0.0
-    for images,labels in train_loader:
-      if t.cuda.is_available():
-        images,labels=images.to(device),labels.to(device)
-      optimizer.zero_grad()
-      outputs=model(images)
-      loss=criterion(outputs,labels)
-      loss.backward()
-      optimizer.step()
-      running_loss+=loss.item()
-    print(f"Epoch [{epoch+1}/{num_epochs}], Loss: {running_loss/len(train_loader):.4f}")
-print("Name: MOHAMMAD SHAHL")
-print("Reg.no: 212223240044")
 
-train_model(model,train_loader,num_epochs=10)
 
-def test_model(model, test_loader):
-  model.eval()
-  correct = 0
-  total = 0
-  all_preds = []
-  all_labels = []
-  with t.no_grad():
-    for images, labels in test_loader:
-      if t.cuda.is_available():
-        images, labels = images.to(device), labels.to(device)
+# Initialize the Model, Loss Function, and Optimizer
+model =
+criterion =
+optimizer =
 
-      outputs = model(images)
-      _, predicted = t.max(outputs, 1)
-      total += labels.size(0)
-      correct += (predicted == labels).sum().item()
-      all_preds.extend(predicted.cpu().numpy())
-      all_labels.extend(labels.cpu().numpy())
+def train_model(model, train_loadr, num_epochs=10):
+    #Include your code here
 
-  accuracy = correct/total
-  print("Name: MOHAMMAD SHAHL")
-  print("Reg.no: 212223240044")
-  print(f"Test Accuracy: {accuracy:.4f}")
-
-  cm = confusion_matrix(all_labels, all_preds)
-  plt.figure(figsize=(8, 6))
-  print("Name: MOHAMMAD SHAHL")
-  print("Reg.no: 212223240044")
-  sns.heatmap(cm, annot=True, fmt="d", cmap="Blues", xticklabels=test_dataset.classes, yticklabels=test_dataset.classes)
-  plt.xlabel("Predicted")
-  plt.ylabel("Actual")
-  plt.title("Confusion Matrix")
-  plt.show()
-
-  print("Name:MOHAMMAD SHAHL")
-  print("Reg.no: 212223240044")
-  print("Classification Report:")
-  print(classification_report(all_labels, all_preds, target_names=[str(i) for i in range(10)]))
-test_model(model, test_loader)
-
-def predict_image(model,image_index,dataset):
-  model.eval()
-  image,label=dataset[image_index]
-  if t.cuda.is_available():
-    image=image.to(device)
-
-  with t.no_grad():
-    output=model(image.unsqueeze(0))
-    _,predicted=t.max(output,1)
-  class_names=[str(i) for i in range(10)]
-  print("Name: MOHAMMAD SHAHL")
-  print("Reg.no: 212223240044")
-  plt.imshow(image.cpu().squeeze(0),cmap='gray')
-  plt.title(f"Actual: {class_names[label]}\nPredicted: {class_names[predicted.item()]}")
-  plt.axis("off")
-  plt.show()
-  print(f"Actual: {class_names[label]}\nPredicted: {class_names[predicted.item()]}")
-predict_image(model,image_index=80,dataset=test_dataset)
 ```
 
 ### OUTPUT
 
 ## Training Loss per Epoch
-<img width="659" height="476" alt="Screenshot 2025-11-18 093907" src="https://github.com/user-attachments/assets/1c645c54-d944-4dde-ae1e-44ea27b683ba" />
 
+Include the Training Loss per epoch
 
 ## Confusion Matrix
 
-<img width="885" height="752" alt="image" src="https://github.com/user-attachments/assets/da43bf2c-9808-44f7-af5d-0fc1535f2ee0" />
+Include confusion matrix here
 
 ## Classification Report
-<img width="570" height="384" alt="483859825-9720d430-102c-4b69-8fc6-ea53dfe92044" src="https://github.com/user-attachments/assets/a230c343-42dd-4e43-93af-352ee7ed3f92" />
+Include classification report here
 
+### New Sample Data Prediction
+Include your sample input and output here
 
-### New Sample Data Prediction/>
-<img width="546" height="584" alt="483859856-3ed477b4-8d11-448b-b169-4c53ddd2f03f" src="https://github.com/user-attachments/assets/c102cd83-d309-4840-b661-c72e5dab0a7c" />
-
-
-
-### RESULT
-Thus the CNN model was trained and tested successfully on the MNIST dataset.
+## RESULT
+Include your result here
